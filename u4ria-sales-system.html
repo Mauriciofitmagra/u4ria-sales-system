@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U4RIA AI — Sales System | Alex Mauricio Sánchez</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+#login-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--brand, #1a0533);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+}
+.login-box {
+  width: 100%; max-width: 380px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.login-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 28px;
+  color: #fff; letter-spacing: 1px; margin-bottom: 4px;
+}
+.login-logo span { color: #E8A020; }
+.login-tagline {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2rem;
+}
+.login-label {
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5);
+  text-transform: uppercase; letter-spacing: .08em;
+  text-align: left; display: block; margin-bottom: .375rem;
+}
+.login-input {
+  width: 100%; padding: .75rem 1rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px; color: #fff;
+  font-size: 15px; font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border .15s; margin-bottom: 1rem;
+  letter-spacing: .1em;
+}
+.login-input:focus { border-color: #6B21FF; }
+.login-btn {
+  width: 100%; padding: .875rem;
+  background: #6B21FF; color: #fff;
+  font-size: 14px; font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  border: none; border-radius: 10px;
+  cursor: pointer; transition: background .15s;
+  letter-spacing: .05em;
+}
+.login-btn:hover { background: #5a1adf; }
+.login-error {
+  font-size: 12px; color: #f87171;
+  margin-top: .75rem; min-height: 18px;
+}
+</style>
+<style>
+:root {
+  --brand: #1a0533;
+  --purple: #6B21FF;
+  --purple-light: #9B6FFF;
+  --purple-pale: #F0EBFF;
+  --gold: #E8A020;
+  --text: #1a1a2e;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --bg: #fafafa;
+  --card: #ffffff;
+  --log: #1e40af;
+  --log-bg: #eff6ff;
+  --re: #92400e;
+  --re-bg: #fffbeb;
+  --green: #065f46;
+  --green-bg: #ecfdf5;
+  --red: #991b1b;
+  --red-bg: #fef2f2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
+/* HEADER */
+.site-header {
+  background: var(--brand);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.logo-wrap { display: flex; align-items: center; gap: 12px; }
+.logo-img { width: 36px; height: 36px; object-fit: contain; }
+.logo-fallback {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: #fff;
+}
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: #fff; letter-spacing: .5px; }
+.logo-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+.header-right { text-align: right; }
+.header-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--gold); }
+.header-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* METRICS BAR */
+.metrics-bar {
+  background: var(--brand);
+  padding: .875rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.metric-item { text-align: center; padding: .5rem 0; }
+.metric-val { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; color: #fff; }
+.metric-lbl { font-size: 10px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: .08em; margin-top: 2px; }
+
+/* TABS */
+.tabs-wrap { background: #fff; border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; }
+.tab { padding: .875rem 1.25rem; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all .15s; }
+.tab:hover { color: var(--purple); }
+.tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+/* MAIN */
+.main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.5rem; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* SECTION TITLE */
+.section-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted); margin-bottom: .875rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+
+/* STAGE BAR */
+.stage-bar { display: grid; grid-template-columns: repeat(6,1fr); gap: 8px; margin-bottom: 1.25rem; }
+.stage-col { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: .75rem .5rem; text-align: center; }
+.stage-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; line-height: 1.3; }
+.stage-count { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); }
+.stage-dot { width: 8px; height: 8px; border-radius: 50%; margin: 4px auto 0; }
+.d1{background:#9ca3af}.d2{background:#60a5fa}.d3{background:#fbbf24}.d4{background:#34d399}.d5{background:#f87171}.d6{background:#a78bfa}
+
+/* FILTERS */
+.filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { padding: 5px 14px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; background: #fff; color: var(--text-muted); transition: all .15s; }
+.filter-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+/* LEADS */
+.lead { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: .625rem; transition: box-shadow .15s; }
+.lead:hover { box-shadow: 0 2px 12px rgba(107,33,255,0.08); }
+.lead-top { display: grid; grid-template-columns: 2fr 80px 160px auto auto; gap: 10px; align-items: center; margin-bottom: .625rem; }
+.lead-name { font-weight: 600; font-size: 14px; color: var(--text); }
+.lead-dm { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.sector-tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; margin-top: 3px; }
+.tag-log { background: var(--log-bg); color: var(--log); }
+.tag-re { background: var(--re-bg); color: var(--re); }
+.pri { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; text-align: center; }
+.pri-alta { background: #fef2f2; color: #dc2626; }
+.pri-media { background: #fffbeb; color: #d97706; }
+.stage-select { font-size: 12px; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: var(--text); cursor: pointer; width: 100%; }
+.msg-btn { font-size: 12px; padding: 5px 12px; border-radius: 8px; cursor: pointer; border: 1px solid var(--purple); background: var(--purple-pale); color: var(--purple); font-weight: 500; white-space: nowrap; transition: all .15s; }
+.msg-btn:hover { background: var(--purple); color: #fff; }
+
+/* TOUCH ROW */
+.touch-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-top: .5rem; }
+.touch { text-align: center; }
+.touch-lbl { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
+.touch-cb { width: 15px; height: 15px; cursor: pointer; accent-color: var(--purple); }
+.notes-input { width: 100%; font-size: 12px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: #fafafa; color: var(--text); margin-top: .5rem; }
+
+/* SOP */
+.warn-box { border-left: 3px solid var(--gold); padding: .875rem 1rem; background: #fffbeb; border-radius: 0 8px 8px 0; margin-bottom: 1rem; font-size: 13px; color: #92400e; line-height: 1.6; }
+.sop-step { display: flex; align-items: flex-start; gap: 12px; padding: .875rem 1rem; background: #fff; border: 1px solid var(--border); border-radius: 10px; margin-bottom: .5rem; }
+.step-badge { min-width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; font-family: 'Syne', sans-serif; }
+.b-gray{background:#f3f4f6;color:#6b7280}.b-blue{background:#eff6ff;color:#1d4ed8}.b-amber{background:#fffbeb;color:#d97706}.b-teal{background:#f0fdf4;color:#15803d}.b-purple{background:var(--purple-pale);color:var(--purple)}
+.step-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.step-desc { font-size: 12px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
+
+/* TEMPLATES */
+.template-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; margin-bottom: .75rem; overflow: hidden; }
+.template-header { padding: .625rem 1rem; background: #f9fafb; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+.template-day { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.template-body { padding: .875rem 1rem; font-size: 13px; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
+.vpill { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 20px; background: var(--purple-pale); color: var(--purple); font-weight: 500; }
+
+/* TRACKER */
+.tracker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+.tracker-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: .875rem 1rem; }
+.tracker-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .375rem; }
+.tracker-input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 16px; font-family: 'Syne', sans-serif; font-weight: 700; background: #fafafa; color: var(--text); }
+.progress-bar { height: 4px; border-radius: 2px; background: #f3f4f6; margin-top: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 2px; transition: width .4s ease; }
+.kpi-row { display: flex; justify-content: space-between; align-items: center; padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.kpi-row:last-child { border-bottom: none; }
+.kpi-name { color: var(--text-muted); }
+.kpi-val { font-weight: 600; color: var(--text); font-family: 'Syne', sans-serif; }
+.kpi-status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+.status-ok { background: var(--green-bg); color: var(--green); }
+.status-warn { background: var(--re-bg); color: var(--re); }
+
+/* REPORTE */
+.report-header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+.report-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .375rem; }
+.report-input { width: 100%; font-size: 13px; padding: .5rem .875rem; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: var(--text); }
+.report-textarea { width: 100%; font-size: 13px; padding: .625rem .875rem; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: var(--text); line-height: 1.6; resize: vertical; min-height: 80px; font-family: 'DM Sans', sans-serif; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: .75rem; }
+.report-field { margin-bottom: .75rem; }
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; }
+.stat-field { text-align: center; }
+
+/* ACTIVITY TABLE */
+.activity-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.activity-table th { background: #f9fafb; padding: 8px 10px; text-align: left; font-weight: 600; color: var(--text-muted); font-size: 11px; border-bottom: 1px solid var(--border); }
+.activity-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); }
+.activity-table tr:last-child td { border-bottom: none; }
+.activity-input { width: 100%; font-size: 11px; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--text); }
+.activity-select { width: 100%; font-size: 11px; padding: 3px 4px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--text); }
+
+/* ICP */
+.icp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.icp-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.icp-vertical { font-size: 12px; font-weight: 700; color: var(--purple); margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .05em; }
+.icp-item { font-size: 12px; color: var(--text-muted); padding: 4px 0; border-bottom: 1px solid var(--border); }
+.icp-item:last-child { border-bottom: none; }
+.source-row { display: flex; align-items: center; gap: 10px; padding: .625rem .875rem; background: #fff; border: 1px solid var(--border); border-radius: 8px; margin-bottom: .5rem; }
+.source-label { font-size: 13px; color: var(--text); flex: 1; }
+.cost-free { background: var(--green-bg); color: var(--green); font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+.cost-paid { background: var(--red-bg); color: var(--red); font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+
+/* BUTTONS */
+.btn-primary { width: 100%; padding: .875rem; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 10px; border: none; background: var(--purple); color: #fff; transition: all .15s; font-family: 'DM Sans', sans-serif; margin-top: .75rem; }
+.btn-primary:hover { background: #5a1adf; transform: translateY(-1px); }
+.btn-export { width: 100%; padding: .875rem; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 10px; border: 1px solid var(--purple); background: var(--purple-pale); color: var(--purple); font-family: 'DM Sans', sans-serif; margin-top: .75rem; transition: all .15s; }
+.btn-export:hover { background: var(--purple); color: #fff; }
+
+/* FOOTER */
+.site-footer { background: var(--brand); margin-top: 3rem; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+.footer-left { font-size: 12px; color: rgba(255,255,255,0.5); }
+.footer-left strong { color: var(--gold); display: block; font-size: 13px; }
+.footer-right { font-size: 11px; color: rgba(255,255,255,0.4); text-align: right; }
+.footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: rgba(255,255,255,0.6); }
+
+/* PDF */
+@media print {
+  .site-header, .tabs-wrap, .filters, .msg-btn, .btn-primary, .btn-export { display: none !important; }
+  .panel { display: block !important; }
+  .main { padding: 0; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">U4RIA <span>AI</span></div>
+    <div class="login-tagline">Sales System &middot; Acceso restringido</div>
+    <label class="login-label">Contrasena de acceso</label>
+    <input class="login-input" type="password" id="login-pass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')checkLogin()">
+    <button class="login-btn" onclick="checkLogin()">Ingresar</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="logo-wrap">
+    <!-- REEMPLAZA src="logo.png" con la ruta real de tu logo -->
+    <img src="logo.jpg" alt="U4RIA AI" class="logo-img" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex'">
+    <div class="logo-fallback" id="logo-fallback" style="display:none">U4</div>
+    <div>
+      <div class="logo-text">U4RIA AI</div>
+      <div class="logo-sub">Responsible AI. Real Outcomes.</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-name">Alex Mauricio Sánchez A.</div>
+    <div class="header-role">BDR · Tech-Enabled Sales · AI-First</div>
+  </div>
+</header>
+
+<div class="metrics-bar">
+  <div class="metric-item"><div class="metric-val" id="m-total">0</div><div class="metric-lbl">Leads totales</div></div>
+  <div class="metric-item"><div class="metric-val" id="m-conn">0</div><div class="metric-lbl">Conexiones env.</div></div>
+  <div class="metric-item"><div class="metric-val" id="m-resp">0</div><div class="metric-lbl">Respuestas</div></div>
+  <div class="metric-item"><div class="metric-val" id="m-meet">0</div><div class="metric-lbl">Reuniones</div></div>
+  <div class="metric-item"><div class="metric-val" id="m-sql">0</div><div class="metric-lbl">SQL</div></div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tab active" onclick="switchTab('pipeline',this)">Pipeline</div>
+  <div class="tab" onclick="switchTab('sop',this)">SOP — Secuencia</div>
+  <div class="tab" onclick="switchTab('icp',this)">ICP + Fuentes</div>
+  <div class="tab" onclick="switchTab('templates',this)">Templates</div>
+  <div class="tab" onclick="switchTab('tracker',this)">Tracker semanal</div>
+  <div class="tab" onclick="switchTab('reporte',this)">Reporte Dachi</div>
+</div>
+
+<div class="main">
+
+<!-- PIPELINE -->
+<div id="pipeline" class="panel active">
+  <div class="stage-bar">
+    <div class="stage-col"><div class="stage-label">Identificado</div><div class="stage-count" id="sc-1">0</div><div class="stage-dot d1"></div></div>
+    <div class="stage-col"><div class="stage-label">Solicitud enviada</div><div class="stage-count" id="sc-2">0</div><div class="stage-dot d2"></div></div>
+    <div class="stage-col"><div class="stage-label">Conectado</div><div class="stage-count" id="sc-3">0</div><div class="stage-dot d3"></div></div>
+    <div class="stage-col"><div class="stage-label">Respondió</div><div class="stage-count" id="sc-4">0</div><div class="stage-dot d4"></div></div>
+    <div class="stage-col"><div class="stage-label">No responde</div><div class="stage-count" id="sc-5">0</div><div class="stage-dot d5"></div></div>
+    <div class="stage-col"><div class="stage-label">SQL</div><div class="stage-count" id="sc-6">0</div><div class="stage-dot d6"></div></div>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="filter('all',this)">Todos</button>
+    <button class="filter-btn" onclick="filter('log',this)">Logística</button>
+    <button class="filter-btn" onclick="filter('re',this)">Real Estate</button>
+    <button class="filter-btn" onclick="filter('alta',this)">Alta prioridad</button>
+  </div>
+  <div id="leads-container"></div>
+</div>
+
+<!-- SOP -->
+<div id="sop" class="panel">
+  <div class="warn-box">El primer mensaje después de aceptar la conexión SIEMPRE es un audio de voz personalizado (instrucción directa de Dachi). Solicitudes de conexión en blanco, sin nota. Máximo 5 toques por lead.</div>
+  <div class="section-title">Warm-up del perfil (días 1-3)</div>
+  <div class="sop-step"><div class="step-badge b-gray">D1</div><div><div class="step-title">4-7 conexiones + optimizar perfil</div><div class="step-desc">Foto profesional, headline con propuesta de valor, sección Acerca De en español. Conectar con conocidos primero.</div></div></div>
+  <div class="sop-step"><div class="step-badge b-gray">D2</div><div><div class="step-title">9-13 conexiones + interactuar con posts del ICP</div><div class="step-desc">Dar like y comentar publicaciones de perfiles objetivo. El algoritmo registra actividad — aumenta visibilidad.</div></div></div>
+  <div class="sop-step"><div class="step-badge b-gray">D3</div><div><div class="step-title">15-20 conexiones — escala progresiva</div><div class="step-desc">Nunca más de 20/día los primeros días. LinkedIn puede restringir cuentas nuevas con volumen alto repentino.</div></div></div>
+  <div class="section-title" style="margin-top:1.25rem">Secuencia de outreach (por lead)</div>
+  <div class="sop-step"><div class="step-badge b-blue">D1</div><div><div class="step-title">Solicitud de conexión — sin nota</div><div class="step-desc">Perfil revisado, cargo confirmado. Esperar aceptación 3-7 días.</div></div></div>
+  <div class="sop-step"><div class="step-badge b-amber">D3</div><div><div class="step-title">Audio de voz personalizado</div><div class="step-desc">30-60 segundos. Mencionar la empresa específicamente, su pain point, proponer exploración. NO texto primero.</div></div></div>
+  <div class="sop-step"><div class="step-badge b-teal">D7</div><div><div class="step-title">Mensaje 2 — caso concreto</div><div class="step-desc">Si no respondió al audio. Compartir resultado específico de cliente similar en LATAM. Pregunta de bajo compromiso.</div></div></div>
+  <div class="sop-step"><div class="step-badge b-purple">D14</div><div><div class="step-title">Mensaje 3 — soft ask</div><div class="step-desc">Proponer 10-15 minutos de exploración. Incluir link de Calendly de Dachi: cal.com/dachi-chichiboshvili</div></div></div>
+  <div class="sop-step"><div class="step-badge b-gray">S3-4</div><div><div class="step-title">Follow-up final — cierre o descarte</div><div class="step-desc">Dejar la puerta abierta sin insistir. Si no responde → marcar como frío.</div></div></div>
+</div>
+
+<!-- ICP -->
+<div id="icp" class="panel">
+  <div class="section-title">Perfil de cliente ideal</div>
+  <div class="icp-grid">
+    <div class="icp-card">
+      <div class="icp-vertical">Logística / Última Milla</div>
+      <div class="icp-item">Operadores nacionales con 500+ empleados</div>
+      <div class="icp-item">Empresas de mensajería y BPO logístico</div>
+      <div class="icp-item">Quick commerce y dark stores</div>
+      <div class="icp-item">Cargo: CEO, CTO, VP Ops, Gerente Innovación</div>
+      <div class="icp-item">Pain: ruteo, predicción demanda, visibilidad</div>
+    </div>
+    <div class="icp-card">
+      <div class="icp-vertical" style="color:#92400e">Real Estate Comercial / Industrial</div>
+      <div class="icp-item">Fondos inmobiliarios y REITs colombianos</div>
+      <div class="icp-item">Firmas CRE advisory (Colliers, CBRE, C&W)</div>
+      <div class="icp-item">Parques logísticos e industriales</div>
+      <div class="icp-item">Cargo: CEO, Director General, VP</div>
+      <div class="icp-item">Pain: vacancia, due diligence, valuación</div>
+    </div>
+  </div>
+  <div class="section-title" style="margin-top:1.25rem">Fuentes de prospección</div>
+  <div class="source-row"><span class="source-label">Apollo.io — prospección + secuencias</span><span class="cost-paid">Pago</span></div>
+  <div class="source-row"><span class="source-label">LinkedIn Sales Navigator</span><span class="cost-paid">Pago</span></div>
+  <div class="source-row"><span class="source-label">LinkedIn gratuito — búsqueda manual</span><span class="cost-free">Gratis</span></div>
+  <div class="source-row"><span class="source-label">Google + LinkedIn — research de DMs</span><span class="cost-free">Gratis</span></div>
+  <div class="source-row"><span class="source-label">ANALDEX / Corferias — eventos sector</span><span class="cost-free">Gratis</span></div>
+</div>
+
+<!-- TEMPLATES -->
+<div id="templates" class="panel">
+  <div class="warn-box">Personaliza siempre [Nombre] y [Empresa]. Nunca envíes plantillas genéricas — LinkedIn detecta spam y reduce alcance.</div>
+  <div class="template-card">
+    <div class="template-header"><span class="template-day">D3 — Audio de voz (guión)</span><span class="vpill">Todos los verticales</span></div>
+    <div class="template-body">"Hola [Nombre], te habla Mauricio de U4RIA AI. Vi que [Empresa] está [señal de intención específica]. En U4RIA trabajamos con operadores de [sector] en LATAM ayudándoles a [resultado concreto]. ¿Tendría sentido explorar si algo de esto aplica a lo que están construyendo en [Empresa]? Quedo atento."</div>
+  </div>
+  <div class="template-card">
+    <div class="template-header"><span class="template-day">D7 — Mensaje 2 — caso concreto</span><span class="vpill">Logística</span></div>
+    <div class="template-body">Hola [Nombre], quería compartirte algo que puede resonar con lo que hacen en [Empresa]: un operador de última milla en LATAM redujo costos de entrega en 8-12% usando IA de ruteo dinámico — sin cambiar su flota ni su TMS. Si te parece interesante saber cómo funciona, con gusto te cuento.</div>
+  </div>
+  <div class="template-card">
+    <div class="template-header"><span class="template-day">D7 — Mensaje 2 — caso concreto</span><span class="vpill">Real Estate</span></div>
+    <div class="template-body">Hola [Nombre], quería compartirte algo que puede resonar con lo que hacen en [Empresa]: una firma de real estate comercial automatizó la investigación de propiedades y redujo el tiempo de due diligence en un 50%. También redujo duplicación de leads entre agentes en un 77%. Todo sin cambiar su CRM. Si te parece interesante, con gusto te cuento.</div>
+  </div>
+  <div class="template-card">
+    <div class="template-header"><span class="template-day">D14 — Mensaje 3 — soft ask</span><span class="vpill">Logística + Real Estate</span></div>
+    <div class="template-body">Hola [Nombre], no quiero tomar mucho de tu tiempo. ¿Tendría sentido tener una conversación de 10-15 minutos para ver si lo que hacemos es relevante para [Empresa]? No es una llamada de ventas — es una sesión de exploración para entender si hay algo que valga la pena revisar juntos. Aquí el enlace si te interesa: cal.com/dachi-chichiboshvili</div>
+  </div>
+  <div class="template-card">
+    <div class="template-header"><span class="template-day">S3-S4 — Follow-up final</span><span class="vpill">Cierre o descarte</span></div>
+    <div class="template-body">Hola [Nombre], entiendo que el tiempo es escaso y no quiero insistir más. Solo quería dejar abierta la puerta: si en algún momento quieres explorar cómo la IA puede hacer el trabajo más liviano en [área específica], aquí estaré. ¡Éxitos con todo lo que están construyendo en [Empresa]!</div>
+  </div>
+</div>
+
+<!-- TRACKER -->
+<div id="tracker" class="panel">
+  <div class="section-title">Tracker semanal — KPIs en tiempo real</div>
+  <div class="tracker-grid">
+    <div class="tracker-card"><div class="tracker-label">Nuevas conexiones enviadas</div><input class="tracker-input" type="number" id="t-sent" value="0" min="0" max="200" oninput="updateTracker()"><div class="progress-bar"><div class="progress-fill" id="bar-sent" style="width:0%;background:var(--purple)"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Meta: 100 / semana</div></div>
+    <div class="tracker-card"><div class="tracker-label">Conexiones aceptadas</div><input class="tracker-input" type="number" id="t-acc" value="0" min="0" oninput="updateTracker()"><div class="progress-bar"><div class="progress-fill" id="bar-acc" style="width:0%;background:#34d399"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Tasa esperada: 20-30%</div></div>
+    <div class="tracker-card"><div class="tracker-label">Mensajes enviados (total)</div><input class="tracker-input" type="number" id="t-msg" value="0" min="0" oninput="updateTracker()"><div class="progress-bar"><div class="progress-fill" id="bar-msg" style="width:0%;background:#60a5fa"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Incluye audios + texto</div></div>
+    <div class="tracker-card"><div class="tracker-label">Respuestas recibidas</div><input class="tracker-input" type="number" id="t-resp" value="0" min="0" oninput="updateTracker()"><div class="progress-bar"><div class="progress-fill" id="bar-resp" style="width:0%;background:#fbbf24"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Meta: 10-15% de mensajes</div></div>
+    <div class="tracker-card"><div class="tracker-label">Audios enviados</div><input class="tracker-input" type="number" id="t-aud" value="0" min="0" oninput="updateTracker()"><div class="progress-bar"><div class="progress-fill" id="bar-aud" style="width:0%;background:#a78bfa"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Debe = conexiones aceptadas</div></div>
+    <div class="tracker-card"><div class="tracker-label">Reuniones agendadas</div><input class="tracker-input" type="number" id="t-meet" value="0" min="0" oninput="updateTracker()"><div class="progress-bar"><div class="progress-fill" id="bar-meet" style="width:0%;background:#34d399"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Meta: 2-3 / semana</div></div>
+    <div class="tracker-card"><div class="tracker-label">Rechazos de leads</div><input class="tracker-input" type="number" id="t-rej" value="0" min="0" oninput="updateTracker()"><div class="progress-bar"><div class="progress-fill" id="bar-rej" style="width:0%;background:#f87171"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Registrar para análisis</div></div>
+  </div>
+  <div class="card">
+    <div class="section-title">KPIs calculados</div>
+    <div class="kpi-row"><span class="kpi-name">Tasa de aceptación</span><span class="kpi-val" id="kpi-acc">—</span><span class="kpi-status" id="st-acc">—</span></div>
+    <div class="kpi-row"><span class="kpi-name">Ratio audio / aceptadas</span><span class="kpi-val" id="kpi-aud">—</span><span class="kpi-status" id="st-aud">—</span></div>
+    <div class="kpi-row"><span class="kpi-name">Tasa de respuesta</span><span class="kpi-val" id="kpi-resp">—</span><span class="kpi-status" id="st-resp">—</span></div>
+    <div class="kpi-row"><span class="kpi-name">Tasa de reunión sobre aceptadas</span><span class="kpi-val" id="kpi-meet">—</span><span class="kpi-status" id="st-meet">—</span></div>
+    <div class="kpi-row"><span class="kpi-name">Volumen semanal vs meta</span><span class="kpi-val" id="kpi-vol">—</span><span class="kpi-status" id="st-vol">—</span></div>
+  </div>
+</div>
+
+<!-- REPORTE DACHI -->
+<div id="reporte" class="panel">
+  <div class="section-title">Reporte semanal de ventas — U4RIA AI</div>
+  <div class="report-header-grid">
+    <div><div class="report-label">Nombre BDR</div><input class="report-input" type="text" id="r-nombre" value="Alex Mauricio Sánchez A."></div>
+    <div><div class="report-label">Semana #</div><input class="report-input" type="text" id="r-semana" value="17 — 2026"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">01 — Resumen de estadísticas</div>
+    <div class="stats-row">
+      <div class="stat-field"><div class="report-label">Conexiones</div><input class="report-input" type="number" id="r-conn" value="0" style="text-align:center"></div>
+      <div class="stat-field"><div class="report-label">Mensajes</div><input class="report-input" type="number" id="r-msg" value="0" style="text-align:center"></div>
+      <div class="stat-field"><div class="report-label">Respuestas</div><input class="report-input" type="number" id="r-resp" value="0" style="text-align:center"></div>
+      <div class="stat-field"><div class="report-label">Reuniones</div><input class="report-input" type="number" id="r-meet" value="0" style="text-align:center"></div>
+      <div class="stat-field"><div class="report-label">Rechazos</div><input class="report-input" type="number" id="r-rej" value="0" style="text-align:center"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">02 — Registro de actividad de prospección</div>
+    <div style="overflow-x:auto"><table class="activity-table"><thead><tr><th>#</th><th>Prospecto</th><th>Fase alcanzada</th><th>Medio</th><th>¿Cita?</th><th>¿Rechazado?</th><th>Notas</th></tr></thead><tbody id="activity-tbody"></tbody></table></div>
+  </div>
+  <div class="card"><div class="section-title">03 — Victorias de la semana</div><div class="report-field"><textarea class="report-textarea" id="r-wins" placeholder="Logros, respuestas positivas, conexiones clave..."></textarea></div></div>
+  <div class="card"><div class="section-title">04 — Bloqueos & Desafíos</div><div class="report-field"><textarea class="report-textarea" id="r-blocks" placeholder="Obstáculos, objeciones recurrentes, problemas de herramientas..."></textarea></div></div>
+  <div class="card"><div class="section-title">05 — Actualizaciones de pipeline</div><div class="report-field"><textarea class="report-textarea" id="r-pipeline" placeholder="Leads que avanzaron, oportunidades calientes..."></textarea></div></div>
+  <div class="card"><div class="section-title">06 — Foco la semana que viene</div><div class="report-field"><textarea class="report-textarea" id="r-next" placeholder="3 prioridades de prospección para la próxima semana..."></textarea></div></div>
+  <div class="card"><div class="section-title">07 — Apoyo que necesito del equipo de líderes</div><div class="report-field"><textarea class="report-textarea" id="r-support" placeholder="Recursos, intros, clarificaciones de producto, casos de éxito..."></textarea></div></div>
+  <button class="btn-export" onclick="exportReport()">Generar resumen del reporte para Dachi ↗</button>
+  <button class="btn-primary" onclick="window.print()">Imprimir / Guardar como PDF</button>
+</div>
+
+</div><!-- /main -->
+
+<footer class="site-footer">
+  <div class="footer-left">
+    <strong>Alex Mauricio Sánchez A.</strong>
+    BDR · U4RIA AI Sales Team · +57 316 5754416 · destinare.oficial@gmail.com
+  </div>
+  <div class="footer-right">
+    <div class="footer-logo">U4RIA AI</div>
+    Responsible AI. Real Outcomes.<br>
+    Sistema creado por Alex Mauricio Sánchez A.
+  </div>
+</footer>
+
+<script>
+var stages={1:"Identificado",2:"Solicitud enviada",3:"Conectado",4:"Respondió",5:"No responde",6:"SQL"};
+var leads=[
+  {id:1,name:"Inter Rapidísimo",dm:"Isaac Chaparro — Gerente de Innovación",sector:"log",pri:"alta",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Hola Isaac, vi la apuesta de Inter por IA y drones — es exactamente la dirección correcta. En U4RIA hemos trabajado con operadores de última milla en LATAM para reducir costos de entrega entre 8-12% usando IA de ruteo dinámico. ¿Tiene 20 minutos para ver cómo aplicaría a la red de Inter?"},
+  {id:2,name:"Grupo TCC",dm:"Diego Fernando Mantilla — Presidente Ejecutivo",sector:"log",pri:"alta",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Diego, el lanzamiento de TECCO muestra que TCC entiende que el futuro de la logística es digital. En U4RIA desarrollamos la capa de IA que potencia esos ecosistemas. ¿Exploramos cómo podría integrarse con TECCO?"},
+  {id:3,name:"Coordinadora Mercantil",dm:"VP Tecnología / Operaciones (confirmar)",sector:"log",pri:"alta",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Hola [Nombre], en un mercado donde Inter ya está invirtiendo en IA, Coordinadora tiene una ventana estratégica. En U4RIA implementamos modelos de predicción de demanda que reducen el tiempo de planificación hasta 60%. ¿Le cuento más?"},
+  {id:4,name:"Rappi Colombia",dm:"Juan Manuel Palau — Head of Turbo",sector:"log",pri:"alta",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Juan Manuel, Turbo es el producto más exigente de última milla en LATAM. En U4RIA trabajamos en modelos de placement óptimo de dark stores y predicción de demanda hiperlocal. ¿Tiene espacio para una llamada rápida?"},
+  {id:5,name:"Logytech Mobile",dm:"CEO / Gerente General (confirmar)",sector:"log",pri:"media",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Hola [Nombre], en U4RIA ayudamos a operadores de BPO logístico a mejorar eficiencia de flota con IA. ¿Le interesaría ver cómo aplica a Logytech?"},
+  {id:6,name:"Terranum",dm:"Alfredo Rizo — CEO & Co-fundador",sector:"re",pri:"alta",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Alfredo, el portafolio de parques logísticos de Terranum es uno de los más estratégicos de Colombia. En U4RIA trabajamos con fondos de real estate industrial para predecir demanda en BTS con IA. ¿Tiene 15 minutos esta semana?"},
+  {id:7,name:"Pactia",dm:"Andrés Bejarano — Presidente",sector:"re",pri:"alta",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Andrés, Pactia tiene uno de los portafolios más diversificados de Colombia — 54 activos. En U4RIA hemos desarrollado analítica de ocupación y mantenimiento predictivo para fondos de este tamaño. ¿Exploramos cómo aplicaría?"},
+  {id:8,name:"Colliers Colombia",dm:"Roberto Cáceres — Director General",sector:"re",pri:"alta",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Roberto, con la vacancia industrial en mínimos históricos en Bogotá, el matching inteligente entre tenants y espacios es crítico. En U4RIA automatizamos análisis de mercado y valuación predictiva. ¿Tiene espacio para conversar?"},
+  {id:9,name:"CBRE Colombia",dm:"Sara Lucía Pérez Ochoa — VP",sector:"re",pri:"media",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Sara Lucía, CBRE Colombia maneja uno de los portafolios más grandes del mercado. En U4RIA ayudamos a equipos de research a automatizar reportes de mercado y análisis predictivo. ¿Le cuento cómo funciona?"},
+  {id:10,name:"Cushman & Wakefield",dm:"Country Head / Managing Director (confirmar)",sector:"re",pri:"media",stage:"1",touch:[false,false,false,false,false,false,false,false],notes:"",msg:"Hola [Nombre], en U4RIA trabajamos con firmas globales de CRE para añadir IA de predicción de vacancia y deal analytics. ¿Tiene 15 minutos para explorar si aplica al equipo de C&W Colombia?"}
+];
+
+var currentFilter="all";
+
+function updateGlobalMetrics(){
+  var conn=0,resp=0,sql=0;
+  leads.forEach(function(l){var s=parseInt(l.stage);if(s>=2)conn++;if(s===4)resp++;if(s===6)sql++;});
+  var meet=parseInt(document.getElementById("t-meet").value)||0;
+  document.getElementById("m-total").textContent=leads.length;
+  document.getElementById("m-conn").textContent=conn;
+  document.getElementById("m-resp").textContent=resp;
+  document.getElementById("m-meet").textContent=meet;
+  document.getElementById("m-sql").textContent=sql;
+}
+
+function render(){
+  var c=document.getElementById("leads-container");
+  c.innerHTML="";
+  var counts={1:0,2:0,3:0,4:0,5:0,6:0};
+  leads.forEach(function(l){counts[l.stage]++;});
+  for(var s=1;s<=6;s++){document.getElementById("sc-"+s).textContent=counts[s];}
+  var visible=leads.filter(function(l){
+    if(currentFilter==="log")return l.sector==="log";
+    if(currentFilter==="re")return l.sector==="re";
+    if(currentFilter==="alta")return l.pri==="alta";
+    return true;
+  });
+  visible.forEach(function(l){
+    var div=document.createElement("div");
+    div.className="lead";
+    var tag=l.sector==="log"?'<span class="sector-tag tag-log">Logística</span>':'<span class="sector-tag tag-re">Real Estate</span>';
+    var pri=l.pri==="alta"?'<span class="pri pri-alta">Alta</span>':'<span class="pri pri-media">Media</span>';
+    var opts="";for(var k in stages){opts+='<option value="'+k+'"'+(l.stage===k?" selected":"")+'>'+stages[k]+'</option>';}
+    var tlabels=["Sol.","Audio","Msg2","Msg3","Msg4","Msg5","Cita","SQL"];
+    var touches="";
+    for(var i=0;i<8;i++){touches+='<div class="touch"><div class="touch-lbl">'+tlabels[i]+'</div><input type="checkbox" class="touch-cb" data-lid="'+l.id+'" data-ti="'+i+'"'+(l.touch[i]?" checked":"")+"></div>";}
+    div.innerHTML='<div class="lead-top"><div><div class="lead-name">'+l.name+'</div><div class="lead-dm">'+l.dm+'</div>'+tag+'</div>'+pri+'<select class="stage-select" data-id="'+l.id+'">'+opts+'</select><button class="msg-btn" data-id="'+l.id+'">Ver msg</button></div><div class="touch-row">'+touches+'</div><input class="notes-input" type="text" placeholder="Notas / URL LinkedIn..." data-id="'+l.id+'" value="'+l.notes+'">';
+    c.appendChild(div);
+  });
+  c.querySelectorAll(".stage-select").forEach(function(s){
+    s.addEventListener("change",function(){
+      leads.find(function(l){return l.id===parseInt(this.getAttribute("data-id"));}.bind(this)).stage=this.value;
+      render();updateGlobalMetrics();
+    }.bind(s));
+  });
+  c.querySelectorAll(".msg-btn").forEach(function(b){
+    b.addEventListener("click",function(){
+      var l=leads.find(function(x){return x.id===parseInt(this.getAttribute("data-id"));}.bind(this));
+      alert("MENSAJE DE APERTURA — "+l.name+"\n\n"+l.msg);
+    }.bind(b));
+  });
+  c.querySelectorAll(".touch-cb").forEach(function(cb){
+    cb.addEventListener("change",function(){
+      leads.find(function(x){return x.id===parseInt(this.getAttribute("data-lid"));}.bind(this)).touch[parseInt(this.getAttribute("data-ti"))]=this.checked;
+    }.bind(cb));
+  });
+  c.querySelectorAll(".notes-input").forEach(function(n){
+    n.addEventListener("input",function(){
+      leads.find(function(x){return x.id===parseInt(this.getAttribute("data-id"));}.bind(this)).notes=this.value;
+    }.bind(n));
+  });
+  buildActivityTable();
+  updateGlobalMetrics();
+}
+
+function buildActivityTable(){
+  var tb=document.getElementById("activity-tbody");
+  if(!tb)return;
+  tb.innerHTML="";
+  leads.forEach(function(l,i){
+    var tr=document.createElement("tr");
+    var stageOpts="";
+    for(var k in stages){stageOpts+='<option value="'+stages[k]+'"'+(stages[l.stage]===stages[k]?" selected":"")+'>'+stages[k]+'</option>';}
+    tr.innerHTML='<td>'+(i+1)+'</td><td><input class="activity-input" value="'+l.name+'"></td><td><select class="activity-select">'+stageOpts+'</select></td><td><select class="activity-select"><option>LinkedIn</option><option>Email</option><option>LinkedIn + Email</option></select></td><td><select class="activity-select"><option>No</option><option>Sí</option></select></td><td><select class="activity-select"><option>No</option><option>Sí</option></select></td><td><input class="activity-input" placeholder="Notas..."></td>';
+    tb.appendChild(tr);
+  });
+}
+
+function filter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll(".filter-btn").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+  render();
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+}
+
+function updateTracker(){
+  var sent=parseInt(document.getElementById("t-sent").value)||0;
+  var acc=parseInt(document.getElementById("t-acc").value)||0;
+  var msg=parseInt(document.getElementById("t-msg").value)||0;
+  var resp=parseInt(document.getElementById("t-resp").value)||0;
+  var aud=parseInt(document.getElementById("t-aud").value)||0;
+  var meet=parseInt(document.getElementById("t-meet").value)||0;
+  var rej=parseInt(document.getElementById("t-rej").value)||0;
+  document.getElementById("bar-sent").style.width=Math.min(sent,100)+"%";
+  document.getElementById("bar-acc").style.width=(sent?Math.min(acc/sent*100,100):0)+"%";
+  document.getElementById("bar-msg").style.width=(acc?Math.min(msg/acc*100,100):0)+"%";
+  document.getElementById("bar-resp").style.width=(msg?Math.min(resp/msg*100,100):0)+"%";
+  document.getElementById("bar-aud").style.width=(acc?Math.min(aud/acc*100,100):0)+"%";
+  document.getElementById("bar-meet").style.width=Math.min(meet/3*100,100)+"%";
+  document.getElementById("bar-rej").style.width=(sent?Math.min(rej/sent*100,100):0)+"%";
+  function pct(a,b){return b?Math.round(a/b*100)+"%":"—";}
+  var accR=sent?Math.round(acc/sent*100):null;
+  document.getElementById("kpi-acc").textContent=accR!==null?accR+"%":"—";
+  document.getElementById("st-acc").textContent=accR===null?"—":accR>=20?"objetivo":"por debajo";
+  document.getElementById("st-acc").className="kpi-status "+(accR===null?"":accR>=20?"status-ok":"status-warn");
+  var audR=acc?Math.round(aud/acc*100):null;
+  document.getElementById("kpi-aud").textContent=audR!==null?audR+"%":"—";
+  document.getElementById("st-aud").textContent=audR===null?"—":audR>=90?"objetivo":"incompleto";
+  document.getElementById("st-aud").className="kpi-status "+(audR===null?"":audR>=90?"status-ok":"status-warn");
+  var respR=msg?Math.round(resp/msg*100):null;
+  document.getElementById("kpi-resp").textContent=respR!==null?respR+"%":"—";
+  document.getElementById("st-resp").textContent=respR===null?"—":respR>=10?"objetivo":"construyendo";
+  document.getElementById("st-resp").className="kpi-status "+(respR===null?"":respR>=10?"status-ok":"status-warn");
+  var meetR=acc?Math.round(meet/acc*100):null;
+  document.getElementById("kpi-meet").textContent=meetR!==null?meetR+"%":"—";
+  document.getElementById("st-meet").textContent=meetR===null?"—":meetR>=5?"objetivo":"construyendo";
+  document.getElementById("st-meet").className="kpi-status "+(meetR===null?"":meetR>=5?"status-ok":"status-warn");
+  document.getElementById("kpi-vol").textContent=sent+"/100";
+  document.getElementById("st-vol").textContent=sent>=100?"completo":sent>=60?"en camino":"bajo";
+  document.getElementById("st-vol").className="kpi-status "+(sent>=100?"status-ok":"status-warn");
+  document.getElementById("m-meet").textContent=meet;
+  document.getElementById("r-conn").value=sent;
+  document.getElementById("r-msg").value=msg;
+  document.getElementById("r-resp").value=resp;
+  document.getElementById("r-meet").value=meet;
+  document.getElementById("r-rej").value=rej;
+}
+
+function exportReport(){
+  var nombre=document.getElementById("r-nombre").value;
+  var semana=document.getElementById("r-semana").value;
+  var conn=document.getElementById("r-conn").value;
+  var msg=document.getElementById("r-msg").value;
+  var resp=document.getElementById("r-resp").value;
+  var meet=document.getElementById("r-meet").value;
+  var rej=document.getElementById("r-rej").value;
+  var wins=document.getElementById("r-wins").value||"(sin registrar)";
+  var blocks=document.getElementById("r-blocks").value||"(sin registrar)";
+  var pipeline=document.getElementById("r-pipeline").value||"(sin registrar)";
+  var next=document.getElementById("r-next").value||"(sin registrar)";
+  var support=document.getElementById("r-support").value||"(sin registrar)";
+  var text="REPORTE SEMANAL U4RIA AI\n"+"Nombre: "+nombre+" | Semana: "+semana+"\n\n01 — ESTADÍSTICAS\nConexiones: "+conn+" | Mensajes: "+msg+" | Respuestas: "+resp+" | Reuniones: "+meet+" | Rechazos: "+rej+"\n\n03 — VICTORIAS\n"+wins+"\n\n04 — BLOQUEOS\n"+blocks+"\n\n05 — PIPELINE\n"+pipeline+"\n\n06 — FOCO PRÓXIMA SEMANA\n"+next+"\n\n07 — APOYO NECESARIO\n"+support;
+  var ta=document.createElement("textarea");
+  ta.value=text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
+  alert("✓ Reporte copiado al portapapeles. Pégalo en WhatsApp o email para enviárselo a Dachi.");
+}
+
+function checkLogin(){
+  var pass=document.getElementById("login-pass").value;
+  if(pass==="LetsGo26"){
+    document.getElementById("login-screen").style.display="none";
+  } else {
+    document.getElementById("login-error").textContent="Contraseña incorrecta. Intenta de nuevo.";
+    document.getElementById("login-pass").value="";
+    document.getElementById("login-pass").focus();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
